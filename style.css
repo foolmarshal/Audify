@@ -90,6 +90,7 @@ nav ul li{
     justify-content: space-between;
     align-items: center;
     border-radius: 34px;
+    cursor: pointer;
 }
 
 .songItem img{
