@@ -51,16 +51,23 @@ masterPlay.addEventListener('click', ()=>{
 
 window.addEventListener('keydown', (event)=>{
     if (event.keyCode == 32){
+        const arr = audioElement.src.split('/');
+        const songIdx = parseInt(arr[arr.length - 1].split('.')[0]) - 1;
+        const ele = document.getElementsByClassName("songItemPlay")[songIdx];
         if(audioElement.paused || audioElement.currentTime<=0){
             audioElement.play();
             masterPlay.classList.remove('fa-play-circle');
             masterPlay.classList.add('fa-pause-circle');
+            ele.classList.remove('fa-play-circle');
+            ele.classList.add('fa-pause-circle');
             gif.style.opacity = 1;
         }
         else{
             audioElement.pause();
             masterPlay.classList.remove('fa-pause-circle');
             masterPlay.classList.add('fa-play-circle');
+            ele.classList.remove('fa-pause-circle');
+            ele.classList.add('fa-play-circle');
             gif.style.opacity = 0;
         }
     }
