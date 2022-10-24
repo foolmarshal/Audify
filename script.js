@@ -30,46 +30,42 @@ songItems.forEach((element, i) => {
 
 
 //audioElement.play();
+const getCurrentSongIdx = function() {
+    const arr = audioElement.src.split('/');
+    return parseInt(arr[arr.length - 1].split('.')[0]) - 1;
+}
 
-//Handle play/pause click
-masterPlay.addEventListener('click', ()=>{
+const toggleSong = function() {
+    const songIdx = getCurrentSongIdx();
+    const ele = document.getElementsByClassName("songItemPlay")[songIdx];
     if(audioElement.paused || audioElement.currentTime<=0){
         audioElement.play();
         masterPlay.classList.remove('fa-play-circle');
         masterPlay.classList.add('fa-pause-circle');
+        ele.classList.remove('fa-play-circle');
+        ele.classList.add('fa-pause-circle');
         gif.style.opacity = 1;
     }
     else{
         audioElement.pause();
         masterPlay.classList.remove('fa-pause-circle');
         masterPlay.classList.add('fa-play-circle');
+        ele.classList.remove('fa-pause-circle');
+        ele.classList.add('fa-play-circle');
         gif.style.opacity = 0;
     }
+}
+
+//Handle play/pause click
+masterPlay.addEventListener('click', ()=>{
+    toggleSong();
 })
 
 
 
 window.addEventListener('keydown', (event)=>{
     if (event.keyCode == 32){
-        const arr = audioElement.src.split('/');
-        const songIdx = parseInt(arr[arr.length - 1].split('.')[0]) - 1;
-        const ele = document.getElementsByClassName("songItemPlay")[songIdx];
-        if(audioElement.paused || audioElement.currentTime<=0){
-            audioElement.play();
-            masterPlay.classList.remove('fa-play-circle');
-            masterPlay.classList.add('fa-pause-circle');
-            ele.classList.remove('fa-play-circle');
-            ele.classList.add('fa-pause-circle');
-            gif.style.opacity = 1;
-        }
-        else{
-            audioElement.pause();
-            masterPlay.classList.remove('fa-pause-circle');
-            masterPlay.classList.add('fa-play-circle');
-            ele.classList.remove('fa-pause-circle');
-            ele.classList.add('fa-play-circle');
-            gif.style.opacity = 0;
-        }
+        toggleSong();
     }
 })
 
@@ -96,38 +92,19 @@ const makeAllPlays = (id)=>{
     })
 }
 
-const playSong = (e) => {
-    songIndex = parseInt(e.id);
-    e.classList.remove('fa-play-circle');
-    e.classList.add('fa-pause-circle');
-    audioElement.src = `songs/${songIndex+1}.mp3`;
-    masterSongName.innerText = songs[songIndex].songName;
-    audioElement.currentTime = 0;
+const playSong = (songIdx) => {
+    const ele = document.getElementsByClassName("songItemPlay")[songIdx];
+
+    audioElement.src = `songs/${songIdx+1}.mp3`;
     audioElement.play();
-    gif.style.opacity = 1;
     masterPlay.classList.remove('fa-play-circle');
     masterPlay.classList.add('fa-pause-circle');
-}
-
-const pauseSong = (e) => {
-    songIndex = parseInt(e.id);
-    e.classList.remove('fa-pause-circle');
-    e.classList.add('fa-play-circle');
-    audioElement.src = `songs/${songIndex+1}.mp3`;
-    masterSongName.innerText = songs[songIndex].songName;
+    ele.classList.remove('fa-play-circle');
+    ele.classList.add('fa-pause-circle');
+    gif.style.opacity = 1;
     audioElement.currentTime = 0;
-    audioElement.pause();
-    gif.style.opacity = 0;
-    masterPlay.classList.remove('fa-pause-circle');
-    masterPlay.classList.add('fa-play-circle');
-}
 
-const togglePlayPause = (e) => {
-    if(e.classList.contains("fa-play-circle")) {
-        playSong(e);
-    } else if (e.classList.contains("fa-pause-circle")) {
-         pauseSong(e);
-    }
+    masterSongName.innerText = songs[songIdx].songName;
 }
 
 Array.from(document.getElementsByClassName('songItem')).forEach((element) =>{
@@ -136,8 +113,18 @@ Array.from(document.getElementsByClassName('songItem')).forEach((element) =>{
         if(e.target.className !== "songItem") {
             obj = findAncestor(e.target, "songItem");
         }
-        makeAllPlays(obj.getElementsByClassName("songItemPlay")[0].id);
-        togglePlayPause(obj.getElementsByClassName("songItemPlay")[0]);
+        const currentPlayingIdx = parseInt(getCurrentSongIdx());
+        const clickedSongIdx = parseInt(obj.getElementsByClassName("songItemPlay")[0].id);
+        if(currentPlayingIdx === clickedSongIdx) {
+            toggleSong();
+        } else {
+            if(currentPlayingIdx) {
+                const ele = document.getElementsByClassName("songItemPlay")[currentPlayingIdx];
+                ele.classList.remove('fa-pause-circle');
+                ele.classList.add('fa-play-circle');
+            }
+            playSong(clickedSongIdx);
+        }
     })
 })
 
