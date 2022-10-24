@@ -77,6 +77,9 @@ window.addEventListener('keydown', (event)=>{
 audioElement.addEventListener('timeupdate', ()=>{
     //Update Seekbar
     progress = parseInt((audioElement.currentTime/audioElement.duration)*100);
+    if(!progress) {
+        progress = 0;
+    }
     myProgressBar.value = progress;
 })
 
